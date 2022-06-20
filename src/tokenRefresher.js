@@ -1,8 +1,11 @@
+const livelyAuthToken = 'something-i-can-type';
+
 export const fetchToken = async (authUrl, fetchBody) => {
   const response = await fetch(authUrl, {
     method: "post",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${livelyAuthToken}`,
     },
     body: JSON.stringify(fetchBody),
   });
@@ -34,7 +37,7 @@ export const tokenRefresher = (options) => {
     const url = `${options.authUrl}`;
     let token;
     try {
-      const fetchOptions = {
+      const fetchBody = {
         scopes: [options.scope],
         userId: options.userId,
         data: {
@@ -43,10 +46,12 @@ export const tokenRefresher = (options) => {
           mirrors,
         },
       };
+
+      console.log('~~~~~~~fetchBody',fetchBody)
       
       //This has not been created yet, please see below for this method.
       //Here we actually fetch our options
-      token = await fetchToken(url, fetchOptions);
+      token = await fetchToken(url, fetchBody);
       console.log('token from refresher', token);
     } catch (error) {
       // eslint-disable-next-line no-console

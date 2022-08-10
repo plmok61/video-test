@@ -7,6 +7,7 @@ import {
 
 import './App.css';
 import Call from './Call';
+import CallDirect from './CallDirect';
 import Home from './Home';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home setUserType={setUserType} />} />
         <Route path="/call/:callId" element={<Call isOwner={isOwner} />} />
+        <Route path="/call-direct/:callId" element={<CallDirect />} />
       </Routes>
     </BrowserRouter>
   );

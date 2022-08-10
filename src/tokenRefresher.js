@@ -24,6 +24,7 @@ export const tokenRefresher = (options) => {
     {
       id: options.streamKey,
       streamName: options.streamName,
+      scopes: ["broadcaster"],
       kind: "rtmp",
       rtmpPath: `/origin_proxy/${options.streamKey}`,
       clientEncoder: "demo",

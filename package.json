@@ -1,6 +1,6 @@
 {
   "name": "video-test",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@livelyvideo/video-client-web": "^8.1.1",

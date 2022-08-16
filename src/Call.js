@@ -5,16 +5,13 @@ import {
   LivelyCallContext,
   PlayerUiState,
 } from '@livelyvideo/video-client-web';
-import { v4 as uuidv4 } from 'uuid';
 import { useParams } from "react-router-dom";
 
 import './App.css';
 import { tokenRefresher } from './tokenRefresher';
 import Encoder from './Encoder';
 import Player from './Player';
-
-// const endpoint = 'https://lively-dev-usc1a.livelyvideo.tv';
-const endpoint = 'https://phil.devspace.lsea4.livelyvideo.tv';
+import { endpoint } from './Env';
 
 const tokenOptions = {
   livelyEndpoint: endpoint,
@@ -31,24 +28,24 @@ const tokenOptions = {
 const playerReducer = (players, action) => {
   switch (action.type) {
     case "addPlayer":
-       return [...players, { id: '', uiState: new PlayerUiState(action.ev.player) }];
-  case "removePlayer":
-     return players.reduce((acc, player) => {
-       if (player.playerUi.player === action.ev.player) {
-         player.playerUi.dispose();
-         return acc;
-       }
-       acc.push(player);
-       return acc;
-     }, []);
-   case "unmount":
-     return players.reduce((acc, player) => {
-       player.playerUi.dispose();
-       return acc;
-     }, []);
+      return [...players, { id: '', uiState: new PlayerUiState(action.ev.player) }];
+    case "removePlayer":
+      return players.reduce((acc, player) => {
+        if (player.playerUi.player === action.ev.player) {
+          player.playerUi.dispose();
+          return acc;
+        }
+        acc.push(player);
+        return acc;
+      }, []);
+    case "unmount":
+      return players.reduce((acc, player) => {
+        player.playerUi.dispose();
+        return acc;
+      }, []);
     default:
       throw new Error();
- }
+  }
 };
 
 function Call({ isOwner }) {
@@ -68,11 +65,11 @@ function Call({ isOwner }) {
         tokenOptions.displayName = 'demo-owner'
         tokenOptions.streamName = 'demo';
       }
-      
+
 
       console.log('token options', tokenOptions);
       const opts = {
-        livelyEndpoints:  [endpoint],
+        livelyEndpoints: [endpoint],
         token: tokenRefresher(tokenOptions),
         loggerConfig: {
           clientName: "video-text",
@@ -86,7 +83,7 @@ function Call({ isOwner }) {
         console.log('~~~~~~~PLAYER ADDED', ev)
         setPlayers({ type: "addPlayer", ev });
       });
-  
+
       newVC.on("playerRemoved", (ev) => {
         setPlayers({ type: "removePlayer", ev });
       });
@@ -103,7 +100,7 @@ function Call({ isOwner }) {
     };
   }, [vc, callId, isOwner]);
 
-  if (vc === null) { 
+  if (vc === null) {
     return (
       <div>loading</div>
     )
@@ -134,7 +131,7 @@ function Call({ isOwner }) {
             <Player player={player} key={player.id} />
           )
         ))}
-        <button 
+        <button
           onClick={async () => {
             if (callId && vc && call === null) {
               const joinedCall = await vc.joinCall(callId, { userId: '123' });

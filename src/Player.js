@@ -19,7 +19,7 @@ import {
 
 function Player({ player }) {
   return (
-    <div>
+    <div style={{width: "500px", margin: '30px auto', padding: '10px', textAlign: 'center', border: 'solid 1px black'}}>
       <LivelyPlayerUiContext.Provider value={player.uiState}>
         <MediaContainer>
           <PlayerGetSoundButton />

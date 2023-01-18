@@ -38,11 +38,17 @@ const playerReducer = (players, action) => {
 function CallDirect() {
   const [vc, setVc] = useState(null);
   const [call, setCall] = useState(null);
+  const [loadbalancer, setLoadbalancer] = useState(null);
   const [players, setPlayers] = useReducer(playerReducer, []);
 
-  const { callId } = useParams()
+  const { callId } = useParams();
+  const query = new URLSearchParams(document.location.search);
+  const lb = query.get("lb");
 
   useEffect(() => {
+    const usedLoadBalancer = lb ?? endpoint;
+    setLoadbalancer(usedLoadBalancer);
+
     if (vc === null) {
       const fetchToken = async (
         authUrl,
@@ -67,7 +73,7 @@ function CallDirect() {
         let token;
         try {
           console.log("fetching token...");
-          token = await fetchToken(endpoint + "/api/demo/v1/access-token", {
+          token = await fetchToken(usedLoadBalancer + "/api/demo/v1/access-token", {
             scopes: ["broadcaster"],
             userId: userId,
             data: {
@@ -96,7 +102,7 @@ function CallDirect() {
       };
 
       const opts = {
-        livelyEndpoints: [endpoint],
+        livelyEndpoints: [usedLoadBalancer],
         token: refreshToken,
         loggerConfig: {
           clientName: "video-test",
@@ -141,14 +147,29 @@ function CallDirect() {
     )
   }
 
+  function handleLoadbalancerChange(event) {
+    setLoadbalancer(event.target.value);
+  }
+
   if (call === null) {
     return (
       <div style={{ textAlign: 'center', margin: '20px auto', padding: '20px', width: '500px', border: "1px solid black" }}>
         <h1>Video Test</h1>
-        <p>Click "watch" to view connected video feeds</p>
+
+        <label>
+          Load balancer:&nbsp;
+          <input type="text" name="loadbalancer" value={loadbalancer} onChange={handleLoadbalancerChange} style={{ width: '350px' }} />
+        </label>
+
+        <p>Click "watch" to view connected video feeds/broadcasts</p>
         <button
           style={{ padding: '20px' }}
           onClick={async () => {
+            if (!loadbalancer || (!loadbalancer.startsWith("https://") && !loadbalancer.startsWith("http://"))) {
+              alert("Enter a valid load balancer");
+              return;
+            }
+
             try {
               const joinedCall = await vc.joinCall(callId, { userId: userId });
               console.log("call joined");

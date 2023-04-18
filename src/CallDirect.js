@@ -1,8 +1,8 @@
 import { useState, useEffect, useReducer } from 'react';
 import {
-  LivelyVideoClientContext,
+  VideoClientContext,
   VideoClient,
-  LivelyCallContext,
+  CallContext,
   PlayerUiState,
 } from '@livelyvideo/video-client-web';
 import { useParams } from "react-router-dom";
@@ -121,14 +121,6 @@ function CallDirect() {
         setPlayers({ type: "removePlayer", ev });
       });
       setVc(newVC);
-      // const join = async () => {
-      //   const joinedCall = await newVC.joinCall(callId, { userId: userId });
-      //   setCall(joinedCall);
-      // };
-
-      // join().then(() => {
-      //   console.log("call joined");
-      // });
     }
     return () => {
       if (vc !== null) {
@@ -193,15 +185,15 @@ function CallDirect() {
   }
 
   return (
-    <LivelyVideoClientContext.Provider value={vc}>
-      <LivelyCallContext.Provider value={call}>
+    <VideoClientContext.Provider value={vc}>
+      <CallContext.Provider value={call}>
         {players.map((player) => (
           player.uiState !== null && (
             <Player player={player} key={player.id} />
           )
         ))}
-      </LivelyCallContext.Provider>
-    </LivelyVideoClientContext.Provider>
+      </CallContext.Provider>
+    </VideoClientContext.Provider>
   )
 }
 
